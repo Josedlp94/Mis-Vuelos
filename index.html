@@ -18,7 +18,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .header{padding:1.25rem 0 1rem;border-bottom:1px solid #e5e5e0;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
 .header-title{font-size:20px;font-weight:600}
 .header-sub{font-size:13px;color:#888;margin-top:2px}
-.tabs{display:flex;gap:2px;margin-bottom:1.25rem;background:#e5e5e0;border-radius:10px;padding:3px;overflow-x:auto}
+.tabs{display:flex;gap:2px;margin-bottom:1.25rem;background:#e5e5e0;border-radius:10px;padding:3px;overflow-x:auto;justify-content:center}
 .tab{padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:#666;border-radius:8px;white-space:nowrap;transition:all .15s;flex-shrink:0}
 .tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
 .tab:active{opacity:.7}
@@ -82,18 +82,17 @@ input:focus{border-color:#1a1a1a}
 <div class="app">
   <div class="header">
     <div>
-      <div class="header-title">track my flights ✈</div>
+      <div class="header-title">Track My Flights ✈</div>
       <div class="header-sub" id="header-sub">0 vuelos · 0 países · 0 km</div>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="showTab('dashboard',this)">resumen</button>
-    <button class="tab" onclick="showTab('registrar',this)">registrar</button>
-    <button class="tab" onclick="showTab('mapa',this)">mapa</button>
-    <button class="tab" onclick="showTab('misvuelos',this)">mis vuelos</button>
-    <button class="tab" onclick="showTab('gamification',this)">logros</button>
-    <button class="tab" onclick="showTab('estadisticas',this)">stats</button>
+    <button class="tab active" onclick="showTab('dashboard',this)">Resumen</button>
+    <button class="tab" onclick="showTab('registrar',this)">Registrar</button>
+    <button class="tab" onclick="showTab('mapa',this)">Mapa</button>
+    <button class="tab" onclick="showTab('gamification',this)">Logros</button>
+    <button class="tab" onclick="showTab('estadisticas',this)">Stats</button>
   </div>
 
   <div class="section active" id="tab-dashboard">
@@ -101,47 +100,53 @@ input:focus{border-color:#1a1a1a}
       <div class="metric"><div class="metric-label">vuelos</div><div class="metric-val" id="d-total">0</div></div>
       <div class="metric"><div class="metric-label">países</div><div class="metric-val" id="d-paises">0</div></div>
       <div class="metric"><div class="metric-label">kilómetros</div><div class="metric-val" id="d-km">0</div></div>
-      <div class="metric"><div class="metric-label">vueltas Tierra</div><div class="metric-val" id="d-earth">0</div><div class="metric-sub">40,075 km c/u</div></div>
+      <div class="metric"><div class="metric-label">Vueltas Tierra</div><div class="metric-val" id="d-earth">0</div><div class="metric-sub">40,075 km c/u</div></div>
     </div>
-    <div class="card"><h3>próximo logro</h3><div id="next-milestone-dash"><div class="empty" style="padding:.5rem">agrega vuelos para ver tu progreso</div></div></div>
-    <div class="card"><h3>últimos vuelos</h3><div id="recent-flights"><div class="empty">aún no hay vuelos</div></div></div>
+    <div class="card"><h3>Próximo logro</h3><div id="next-milestone-dash"><div class="empty" style="padding:.5rem">agrega vuelos para ver tu progreso</div></div></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
+        <h3 style="margin:0">Mis vuelos</h3>
+        <div style="font-size:12px;color:#999" id="mv-count-dash"></div>
+      </div>
+      <div id="flights-list-dashboard"></div>
+    </div>
   </div>
 
   <div class="section" id="tab-mapa">
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <h3 style="margin:0">países visitados</h3>
+        <h3 style="margin:0">Países visitados</h3>
         <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#999">
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:11px;height:11px;background:#1D9E75;border-radius:2px;display:inline-block"></span>visitado</span>
-          <span style="display:flex;align-items:center;gap:4px"><span style="width:11px;height:11px;background:#D3D1C7;border-radius:2px;display:inline-block"></span>no visitado</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:11px;height:11px;background:#1D9E75;border-radius:2px;display:inline-block"></span>Visitado</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:11px;height:11px;background:#D3D1C7;border-radius:2px;display:inline-block"></span>No visitado</span>
         </div>
       </div>
       <div class="map-wrap"><div id="world-map" style="width:100%"></div><div class="map-tooltip" id="map-tooltip"></div></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <h3>países visitados</h3>
+      <h3>Países visitados</h3>
       <div id="countries-by-continent"><div style="text-align:center;padding:1rem;color:#bbb;font-size:13px">registra vuelos para ver tus países por continente</div></div>
     </div>
   </div>
 
   <div class="section" id="tab-registrar">
     <div class="card">
-      <h3>agregar vuelo</h3>
+      <h3>Agregar vuelo</h3>
       <div class="form-row">
         <div class="input-wrap">
-          <label>origen</label>
-          <input id="f-origin" placeholder="Ciudad de México..." autocomplete="off" oninput="showSuggest('origin',this.value)" onblur="setTimeout(()=>hideSuggest('origin'),200)">
+          <label>Origen</label>
+          <input id="f-origin" placeholder="Lima..." autocomplete="off" oninput="showSuggest('origin',this.value)" onblur="setTimeout(()=>hideSuggest('origin'),200)">
           <div class="suggest-list" id="suggest-origin"></div>
         </div>
         <div class="input-wrap">
-          <label>destino</label>
+          <label>Destino</label>
           <input id="f-dest" placeholder="Madrid..." autocomplete="off" oninput="showSuggest('dest',this.value)" onblur="setTimeout(()=>hideSuggest('dest'),200)">
           <div class="suggest-list" id="suggest-dest"></div>
         </div>
       </div>
       <div class="dist-box" id="dist-box">
-        <span style="color:#bbb;font-size:13px">escribe origen y destino para calcular la distancia</span>
+        <span style="color:#bbb;font-size:13px">Escribe origen y destino para calcular la distancia</span>
       </div>
       <div style="display:flex;align-items:center;gap:0;margin-top:14px;margin-bottom:2px;background:#f0f0ec;border-radius:10px;padding:3px">
         <button style="flex:1;padding:8px 0;font-size:13px;font-weight:500;border:none;background:#1a1a1a;border-radius:8px;cursor:pointer;color:#fff;text-align:center" id="btn-rt" onclick="setTripType('RT')">RT — round trip</button>
@@ -149,45 +154,36 @@ input:focus{border-color:#1a1a1a}
       </div>
 
       <div class="form-row" style="margin-top:10px">
-        <div><label>fecha</label><input type="date" id="f-date"></div>
+        <div><label>Fecha</label><input type="date" id="f-date"></div>
         <div class="input-wrap">
-          <label>aerolínea</label>
-          <input id="f-airline" placeholder="LATAM, AF, Iberia..." autocomplete="off"
+          <label>Aerolínea</label>
+          <input id="f-airline" placeholder="SKY Airline, Iberia..." autocomplete="off"
             oninput="showAirlineSuggest(this.value)"
             onblur="setTimeout(()=>hideAirlineSuggest(),200)">
           <div class="suggest-list" id="suggest-airline"></div>
         </div>
       </div>
-      <div><label>país visitado</label><input id="f-country" placeholder="España"></div>
-      <button class="btn btn-primary" style="margin-top:14px" onclick="addFlight()">agregar vuelo</button>
-    </div>
-  </div>
-
-  <div class="section" id="tab-misvuelos">
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem">
-        <h3 style="margin:0">mis vuelos</h3>
-        <div style="font-size:12px;color:#999" id="mv-count"></div>
-      </div>
-      <div id="flights-list-full"></div>
+      <div><label>País visitado</label><input id="f-country" placeholder="España"></div>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="addFlight()">Agregar vuelo</button>
+      <div id="form-error" style="display:none;margin-top:8px;font-size:12px;color:#E24B4A;text-align:center">Recuerda llenar todos los datos de tu vuelo</div>
     </div>
   </div>
 
     <div class="section" id="tab-gamification">
     <div class="card">
-      <h3>distancia total</h3>
+      <h3>Distancia total</h3>
       <div style="font-size:30px;font-weight:700;margin-bottom:.5rem" id="g-km-big">0 km</div>
       <div class="progress-bar"><div class="progress-fill" id="g-progress" style="width:0%"></div></div>
       <div style="font-size:12px;color:#999;margin-top:4px" id="g-next-label">siguiente logro: —</div>
     </div>
 
     <div class="card">
-      <h3>logros de distancia 🚀</h3>
+      <h3>Logros de distancia 🚀</h3>
       <div id="milestones-distance"></div>
     </div>
 
     <div class="card">
-      <h3>logros por continente 🌍</h3>
+      <h3>Logros por continente 🌍</h3>
       <div id="milestones-continents"></div>
     </div>
   </div>
@@ -195,12 +191,12 @@ input:focus{border-color:#1a1a1a}
   <div class="section" id="tab-estadisticas">
     <div class="card" style="margin-bottom:12px">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <h3 style="margin:0">período de análisis</h3>
+        <h3 style="margin:0">Período de análisis</h3>
         <button class="btn" style="width:auto;padding:4px 12px;font-size:12px" onclick="clearDateFilter()">ver todo</button>
       </div>
       <div class="form-row" style="margin-top:10px">
-        <div><label>desde</label><input type="date" id="s-date-from" onchange="renderStats()"></div>
-        <div><label>hasta</label><input type="date" id="s-date-to" onchange="renderStats()"></div>
+        <div><label>Desde</label><input type="date" id="s-date-from" onchange="renderStats()"></div>
+        <div><label>Hasta</label><input type="date" id="s-date-to" onchange="renderStats()"></div>
       </div>
       <div style="font-size:12px;color:#999;margin-top:8px" id="s-filter-label">mostrando todos los vuelos</div>
     </div>
@@ -210,8 +206,8 @@ input:focus{border-color:#1a1a1a}
       <div class="metric"><div class="metric-label">vuelo más largo</div><div class="metric-val" id="s-longest" style="font-size:16px">—</div></div>
       <div class="metric"><div class="metric-label">aerolínea fav.</div><div class="metric-val" id="s-airline" style="font-size:16px">—</div></div>
     </div>
-    <div class="card"><h3>vuelos por año <span style="font-size:11px;font-weight:400;color:#999">histórico total</span></h3><div id="by-year"><div class="empty">sin datos aún</div></div></div>
-    <div class="card"><h3>vuelos por mes <span style="font-size:11px;font-weight:400;color:#999">histórico total</span></h3><div id="by-month"><div class="empty">sin datos aún</div></div></div>
+    <div class="card"><h3>Vuelos por año <span style="font-size:11px;font-weight:400;color:#999">histórico total</span></h3><div id="by-year"><div class="empty">sin datos aún</div></div></div>
+    <div class="card"><h3>Vuelos por mes <span style="font-size:11px;font-weight:400;color:#999">histórico total</span></h3><div id="by-month"><div class="empty">sin datos aún</div></div></div>
   </div>
 </div>
 
@@ -311,14 +307,14 @@ const COUNTRY_CONTINENT={
 };
 
 const MILESTONES_DISTANCE=[
-  {label:"primer despegue",km:1,icon:"🛫"},
-  {label:"vuelta a la Tierra (1x)",km:40075,icon:"🌍"},
-  {label:"vuelta a la Tierra (2x)",km:80150,icon:"🌍"},
-  {label:"viaje a la Luna (1/4)",km:96000,icon:"🌙"},
-  {label:"viaje a la Luna (1/2)",km:192000,icon:"🌕"},
-  {label:"llegaste a la Luna",km:384400,icon:"🚀"},
+  {label:"Primer despegue",km:1,icon:"🛫"},
+  {label:"Vuelta a la Tierra (1x)",km:40075,icon:"🌍"},
+  {label:"Vuelta a la Tierra (2x)",km:80150,icon:"🌍"},
+  {label:"Viaje a la Luna (1/4)",km:96000,icon:"🌙"},
+  {label:"Viaje a la Luna (1/2)",km:192000,icon:"🌕"},
+  {label:"Llegaste a la Luna",km:384400,icon:"🚀"},
   {label:"Luna + regreso",km:768800,icon:"🚀"},
-  {label:"camino a Marte",km:2250000,icon:"🔴"},
+  {label:"Camino a Marte",km:2250000,icon:"🔴"},
 ];
 
 const MONTHS=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
@@ -437,7 +433,13 @@ function addFlight(){
   const airline=document.getElementById('f-airline').value.trim();
   
   const country=document.getElementById('f-country').value.trim();
-  if(!origin||!dest||!date||!airline){alert('Todos los campos son obligatorios: origen, destino, fecha y aerolínea.');return;}
+  const formError=document.getElementById('form-error');
+  if(!origin||!dest||!date||!airline){
+    formError.style.display='block';
+    setTimeout(()=>formError.style.display='none',4000);
+    return;
+  }
+  formError.style.display='none';
   const manual=document.getElementById('f-km-manual');
   if(manual&&!currentAutoKm)currentAutoKm=parseInt(manual.value)||0;
   const kmFinal=tripType==='RT'?currentAutoKm*2:currentAutoKm;
@@ -445,7 +447,7 @@ function addFlight(){
   save();render();
   ['f-origin','f-dest','f-airline','f-country'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   setDefaultDate();currentAutoKm=0;selectedOrigin=null;selectedDest=null;
-  document.getElementById('dist-box').innerHTML=`<span style="color:#bbb;font-size:13px">escribe origen y destino para calcular la distancia</span>`;
+  document.getElementById('dist-box').innerHTML=`<span style="color:#bbb;font-size:13px">Escribe origen y destino para calcular la distancia</span>`;
   tripType='RT';setTripType('RT');
   if(mapRendered)updateMap();
 }
@@ -459,7 +461,7 @@ function render(){
   document.getElementById('d-km').textContent=km.toLocaleString();
   document.getElementById('d-earth').textContent=(km/40075).toFixed(2);
   document.getElementById('header-sub').textContent=`${flights.length} vuelos · ${countries} países · ${km.toLocaleString()} km`;
-  renderRecent();renderFlightsFullList();renderCountriesByContinent();renderGamification();renderStats();
+  renderDashboardFlights();renderCountriesByContinent();renderGamification();renderStats();
 }
 
 function renderRecent(){const el=document.getElementById('recent-flights');if(!flights.length){el.innerHTML='<div class="empty">aún no hay vuelos</div>';return;}el.innerHTML=flights.slice(0,5).map(f=>`<div class="flight-row"><div class="route">${f.origin} → ${f.dest}</div><div style="font-size:12px;color:#999;white-space:nowrap">${f.date}</div>${f.km?`<div class="tag">${f.km.toLocaleString()} km</div>`:''}</div>`).join('');}
@@ -485,7 +487,7 @@ function renderGamification(){
   document.getElementById('g-km-big').textContent=km.toLocaleString()+' km';
   const nextD=MILESTONES_DISTANCE.find(m=>km<m.km);
   document.getElementById('g-progress').style.width=(nextD?Math.min(100,(km/nextD.km)*100).toFixed(1):100)+'%';
-  document.getElementById('g-next-label').textContent=nextD?`siguiente: ${nextD.label} (${nextD.km.toLocaleString()} km)`:'¡todos los logros de distancia alcanzados!';
+  document.getElementById('g-next-label').textContent=nextD?`siguiente: ${nextD.label} (${nextD.km.toLocaleString()} km)`:'¡Todos los logros de distancia alcanzados!';
 
   const nd=document.getElementById('next-milestone-dash');
   if(nextD){const pct=Math.min(100,(km/nextD.km)*100).toFixed(0);nd.innerHTML=`<div class="milestone next"><div class="m-title" style="font-size:13px;font-weight:600;margin-bottom:4px">${nextD.icon} ${nextD.label}</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:#999;margin-top:4px">${km.toLocaleString()} / ${nextD.km.toLocaleString()} km (${pct}%)</div></div>`;}
@@ -509,9 +511,9 @@ function renderGamification(){
     const total=info.total;
     const half=Math.ceil(total/2);
     const milestones=[
-      {label:`primer país en ${cont}`,target:'1 país',threshold:1,value:visited,icon:info.icon,green:true},
-      {label:`mitad de ${cont}`,target:`${half} países`,threshold:half,value:visited,icon:info.icon,green:true},
-      {label:`todos los países de ${cont}`,target:`${total} países`,threshold:total,value:visited,icon:'🏆',green:true},
+      {label:`Primer país en ${cont}`,target:'1 país',threshold:1,value:visited,icon:info.icon,green:true},
+      {label:`Mitad de ${cont}`,target:`${half} países`,threshold:half,value:visited,icon:info.icon,green:true},
+      {label:`Todos los países de ${cont}`,target:`${total} países`,threshold:total,value:visited,icon:'🏆',green:true},
     ];
     continentHtml+=`<div class="continent-section"><div class="continent-header">${info.icon} ${cont} · ${visited}/${total} países</div>`;
     let firstUndoneCont=true;
@@ -613,6 +615,31 @@ function renderCountriesByContinent(){
   });
   if(!html)el.innerHTML='<div style="text-align:center;padding:1rem;color:#bbb;font-size:13px">registra vuelos para ver tus países por continente</div>';
   else el.innerHTML=html;
+}
+
+function renderDashboardFlights(){
+  const el=document.getElementById('flights-list-dashboard');
+  const count=document.getElementById('mv-count-dash');
+  if(!el)return;
+  const sorted=[...flights].sort((a,b)=>b.date.localeCompare(a.date));
+  if(count)count.textContent=sorted.length+' vuelo'+(sorted.length!==1?'s':'');
+  if(!sorted.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:#bbb;font-size:13px">Aún no hay vuelos registrados</div>';return;}
+  el.innerHTML=sorted.map(f=>`
+    <div style="padding:12px 0;border-bottom:1px solid #f0f0ec;display:flex;align-items:flex-start;gap:10px">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-weight:600;font-size:14px">${f.origin} → ${f.dest}</span>
+          <span style="font-size:10px;padding:2px 7px;border-radius:6px;background:${f.tripType==='RT'?'#e8f4fe':'#f0fdf8'};color:${f.tripType==='RT'?'#1a6bbf':'#0F6E56'};font-weight:600">${f.tripType||'OW'}</span>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:5px;flex-wrap:wrap">
+          <span style="font-size:12px;color:#999">📅 ${f.date}</span>
+          ${f.airline?`<span style="font-size:12px;color:#999">✈ ${f.airline}</span>`:''}
+          ${f.country?`<span style="font-size:12px;color:#999">📍 ${f.country}</span>`:''}
+          ${f.km?`<span style="font-size:12px;color:#1a6bbf;font-weight:500">${f.km.toLocaleString()} km</span>`:''}
+        </div>
+      </div>
+      <span style="color:#ccc;cursor:pointer;font-size:18px;flex-shrink:0;padding:2px 4px" onclick="deleteFlight(${f.id})">×</span>
+    </div>`).join('');
 }
 
 function renderFlightsFullList(){

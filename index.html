@@ -63,6 +63,9 @@ input:focus{border-color:#1a1a1a}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dist-box{margin-top:10px;padding:11px 13px;border-radius:10px;border:1.5px solid #e5e5e0;background:#f9f9f7;font-size:13px;display:flex;align-items:center;gap:10px;min-height:48px}
 .input-wrap{position:relative}
+.toggle-wrap{display:flex;align-items:center;gap:0;margin-top:14px;margin-bottom:2px;background:#f0f0ec;border-radius:10px;padding:3px}
+.toggle-btn{flex:1;padding:8px 0;font-size:13px;font-weight:500;border:none;background:none;border-radius:8px;cursor:pointer;color:#999;transition:all .15s;text-align:center}
+.toggle-btn.active{background:#1a1a1a;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
 .suggest-list{position:absolute;z-index:50;background:#fff;border:1.5px solid #e5e5e0;border-radius:12px;width:100%;max-height:200px;overflow-y:auto;top:100%;left:0;margin-top:4px;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
 .suggest-item{padding:10px 13px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f5f5f0}
 .suggest-item:last-child{border-bottom:none}
@@ -134,7 +137,12 @@ input:focus{border-color:#1a1a1a}
       <div class="dist-box" id="dist-box">
         <span style="color:#bbb;font-size:13px">escribe origen y destino para calcular la distancia</span>
       </div>
-      <div class="form-row" style="margin-top:0">
+      <div style="display:flex;align-items:center;gap:0;margin-top:14px;margin-bottom:2px;background:#f0f0ec;border-radius:10px;padding:3px">
+        <button style="flex:1;padding:8px 0;font-size:13px;font-weight:500;border:none;background:#1a1a1a;border-radius:8px;cursor:pointer;color:#fff;text-align:center" id="btn-rt" onclick="setTripType('RT')">RT — round trip</button>
+        <button style="flex:1;padding:8px 0;font-size:13px;font-weight:500;border:none;background:none;border-radius:8px;cursor:pointer;color:#999;text-align:center" id="btn-ow" onclick="setTripType('OW')">OW — one way</button>
+      </div>
+
+      <div class="form-row" style="margin-top:10px">
         <div><label>fecha</label><input type="date" id="f-date"></div>
         <div class="input-wrap">
           <label>aerolínea</label>
@@ -305,7 +313,17 @@ const MILESTONES_DISTANCE=[
 const MONTHS=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 const COUNTRY_MAP={"México":"Mexico","España":"Spain","Estados Unidos":"United States of America","Francia":"France","Italia":"Italy","Alemania":"Germany","Reino Unido":"United Kingdom","Portugal":"Portugal","Colombia":"Colombia","Argentina":"Argentina","Brasil":"Brazil","Perú":"Peru","Chile":"Chile","Japón":"Japan","China":"China","Corea del Sur":"South Korea","Australia":"Australia","Canadá":"Canada","Países Bajos":"Netherlands","Holanda":"Netherlands","Bélgica":"Belgium","Suiza":"Switzerland","Austria":"Austria","Grecia":"Greece","Turquía":"Turkey","Marruecos":"Morocco","Egipto":"Egypt","Sudáfrica":"South Africa","India":"India","Tailandia":"Thailand","Cuba":"Cuba","Rep. Dominicana":"Dominican Rep.","Guatemala":"Guatemala","Costa Rica":"Costa Rica","Panamá":"Panama","Uruguay":"Uruguay","Venezuela":"Venezuela","Ecuador":"Ecuador","Bolivia":"Bolivia","Paraguay":"Paraguay","Noruega":"Norway","Suecia":"Sweden","Dinamarca":"Denmark","Finlandia":"Finland","Polonia":"Poland","Rusia":"Russia","Israel":"Israel","Emiratos Árabes":"United Arab Emirates","Singapur":"Singapore","Filipinas":"Philippines","Vietnam":"Vietnam","Nueva Zelanda":"New Zealand","Irlanda":"Ireland","Hungría":"Hungary","Rep. Checa":"Czech Republic"};
 
-let flights=[],worldData=null,mapRendered=false,currentAutoKm=0,selectedOrigin=null,selectedDest=null;
+let flights=[],worldData=null,mapRendered=false,currentAutoKm=0,selectedOrigin=null,selectedDest=null,tripType='RT';
+
+function setTripType(type){
+  tripType=type;
+  const rt=document.getElementById('btn-rt');
+  const ow=document.getElementById('btn-ow');
+  rt.style.background=type==='RT'?'#1a1a1a':'none';
+  rt.style.color=type==='RT'?'#fff':'#999';
+  ow.style.background=type==='OW'?'#1a1a1a':'none';
+  ow.style.color=type==='OW'?'#fff':'#999';
+}
 
 function haversine(la1,lo1,la2,lo2){const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)**2;return Math.round(R*2*Math.asin(Math.sqrt(a)));}
 
@@ -411,11 +429,13 @@ function addFlight(){
   if(!origin||!dest||!date){alert('Completa al menos origen, destino y fecha.');return;}
   const manual=document.getElementById('f-km-manual');
   if(manual&&!currentAutoKm)currentAutoKm=parseInt(manual.value)||0;
-  flights.unshift({id:Date.now(),origin,dest,date,km:currentAutoKm,airline,country});
+  const kmFinal=tripType==='RT'?currentAutoKm*2:currentAutoKm;
+  flights.unshift({id:Date.now(),origin,dest,date,km:kmFinal,airline,country,tripType});
   save();render();
   ['f-origin','f-dest','f-airline','f-country'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   setDefaultDate();currentAutoKm=0;selectedOrigin=null;selectedDest=null;
   document.getElementById('dist-box').innerHTML=`<span style="color:#bbb;font-size:13px">escribe origen y destino para calcular la distancia</span>`;
+  tripType='RT';setTripType('RT');
   if(mapRendered)updateMap();
 }
 
@@ -432,7 +452,8 @@ function render(){
 }
 
 function renderRecent(){const el=document.getElementById('recent-flights');if(!flights.length){el.innerHTML='<div class="empty">aún no hay vuelos</div>';return;}el.innerHTML=flights.slice(0,5).map(f=>`<div class="flight-row"><div class="route">${f.origin} → ${f.dest}</div><div style="font-size:12px;color:#999;white-space:nowrap">${f.date}</div>${f.km?`<div class="tag">${f.km.toLocaleString()} km</div>`:''}</div>`).join('');}
-function renderFlightsList(){const el=document.getElementById('flights-list');if(!flights.length){el.innerHTML='<div class="empty">agrega tu primer vuelo arriba</div>';return;}el.innerHTML=flights.map(f=>`<div class="flight-row"><div style="flex:1;min-width:0"><div class="route">${f.origin} → ${f.dest}</div><div style="font-size:11px;color:#999;margin-top:2px">${f.date}${f.airline?' · '+f.airline:''}</div></div>${f.country?`<span class="badge-country">${f.country}</span>`:''} ${f.km?`<div class="tag">${f.km.toLocaleString()} km</div>`:''}<span class="del" onclick="deleteFlight(${f.id})">×</span></div>`).join('');}
+function renderFlightsList(){const el=document.getElementById('flights-list');if(!flights.length){el.innerHTML='<div class="empty">agrega tu primer vuelo arriba</div>';return;}el.innerHTML=flights.map(f=>`<div class="flight-row"><div style="flex:1;min-width:0"><div class="route">${f.origin} → ${f.dest}</div><div style="font-size:11px;color:#999;margin-top:2px">${f.date}${f.airline?' · '+f.airline:''}</div></div>${f.country?`<span class="badge-country">${f.country}</span>`:''} <span style="font-size:10px;padding:2px 7px;border-radius:6px;background:${f.tripType==='RT'?'#e8f4fe':'#f0fdf8'};color:${f.tripType==='RT'?'#1a6bbf':'#0F6E56'};font-weight:600;white-space:nowrap">${f.tripType||'OW'}</span>
+    ${f.km?`<div class="tag">${f.km.toLocaleString()} km</div>`:''}<span class="del" onclick="deleteFlight(${f.id})">×</span></div>`).join('');}
 function renderCountries(){const el=document.getElementById('countries-list');const set=new Set(flights.map(f=>f.country).filter(Boolean));if(!set.size){el.innerHTML='<div class="empty" style="width:100%">los países aparecen al registrar vuelos</div>';return;}el.innerHTML=[...set].sort().map(c=>`<span class="badge-country">${c}</span>`).join('');}
 
 function renderMilestone(m,done,isnext,pct){

@@ -8,7 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Track My Flights">
 <meta name="theme-color" content="#111111">
-<meta name="version" content="1.0.2">
+<meta name="version" content="2.0.0">
+<script src="https://unpkg.com/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-512.png">
 <title>Track My Flights</title>
@@ -80,6 +81,49 @@ input:focus{border-color:#1a1a1a}
 </style>
 </head>
 <body>
+<div id="auth-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:#f5f5f0">
+  <div style="width:100%;max-width:380px">
+    <div style="text-align:center;margin-bottom:2rem">
+      <img src="/icon-512.png" style="width:80px;height:80px;border-radius:20px;margin-bottom:1rem">
+      <div style="font-size:22px;font-weight:700;color:#1a1a1a">Track My Flights</div>
+      <div style="font-size:13px;color:#999;margin-top:4px">Registra tus vuelos y países visitados</div>
+    </div>
+
+    <div style="background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,0.08)">
+      <div style="display:flex;gap:0;background:#f0f0ec;border-radius:10px;padding:3px;margin-bottom:1.25rem">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:8px 0;font-size:13px;font-weight:500;border:none;background:#1a1a1a;border-radius:8px;cursor:pointer;color:#fff;text-align:center">Iniciar sesión</button>
+        <button id="auth-tab-register" onclick="switchAuthTab('register')" style="flex:1;padding:8px 0;font-size:13px;font-weight:500;border:none;background:none;border-radius:8px;cursor:pointer;color:#999;text-align:center">Registrarse</button>
+      </div>
+
+      <div id="auth-error" style="display:none;background:#fef2f2;color:#E24B4A;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:12px;text-align:center"></div>
+      <div id="auth-success" style="display:none;background:#f0fdf8;color:#0F6E56;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:12px;text-align:center"></div>
+
+      <div style="margin-bottom:12px">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">Email</label>
+        <input id="auth-email" type="email" placeholder="tu@email.com" style="width:100%;font-size:14px;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none">
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">Contraseña</label>
+        <input id="auth-password" type="password" placeholder="mínimo 6 caracteres" style="width:100%;font-size:14px;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none">
+      </div>
+
+      <button id="auth-btn" onclick="handleAuth()" style="width:100%;padding:12px;font-size:14px;font-weight:600;border:none;background:#1a1a1a;color:#fff;border-radius:10px;cursor:pointer">Iniciar sesión</button>
+
+      <div id="auth-confirm-msg" style="display:none;margin-top:12px;font-size:12px;color:#999;text-align:center">
+        Revisa tu email para confirmar tu cuenta antes de iniciar sesión.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="auth-loading" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;z-index:100">
+  <div style="text-align:center">
+    <div style="width:32px;height:32px;border:3px solid #e5e5e0;border-top-color:#1a1a1a;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px"></div>
+    <div style="font-size:13px;color:#999">Cargando...</div>
+  </div>
+</div>
+
+<div id="main-app" style="display:none">
 <div class="app">
   <div class="header">
     <div>
@@ -210,6 +254,7 @@ input:focus{border-color:#1a1a1a}
     <div class="card"><h3>Vuelos por año <span style="font-size:11px;font-weight:400;color:#999">histórico total</span></h3><div id="by-year"><div class="empty">sin datos aún</div></div></div>
     <div class="card"><h3>Vuelos por mes <span style="font-size:11px;font-weight:400;color:#999">histórico total</span></h3><div id="by-month"><div class="empty">sin datos aún</div></div></div>
   </div>
+</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -409,8 +454,92 @@ function showAirlineSuggest(val){
 function hideAirlineSuggest(){document.getElementById('suggest-airline').style.display='none';}
 function selectAirline(name){document.getElementById('f-airline').value=name;hideAirlineSuggest();}
 
-function load(){try{const d=localStorage.getItem('misvuelos_flights');if(d)flights=JSON.parse(d);}catch(e){flights=[];}setDefaultDate();render();}
-function save(){try{localStorage.setItem('misvuelos_flights',JSON.stringify(flights));}catch(e){}}
+const SUPABASE_URL='https://gqmpdnkdyhlcrjnnwiiv.supabase.co';
+const SUPABASE_KEY='sb_publishable_UKjcg49kKmFyI2k5bPdW0A_ViSAO7yt';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let currentUser=null;
+let authMode='login';
+
+function switchAuthTab(mode){
+  authMode=mode;
+  const isLogin=mode==='login';
+  document.getElementById('auth-tab-login').style.background=isLogin?'#1a1a1a':'none';
+  document.getElementById('auth-tab-login').style.color=isLogin?'#fff':'#999';
+  document.getElementById('auth-tab-register').style.background=!isLogin?'#1a1a1a':'none';
+  document.getElementById('auth-tab-register').style.color=!isLogin?'#fff':'#999';
+  document.getElementById('auth-btn').textContent=isLogin?'Iniciar sesión':'Crear cuenta';
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-success').style.display='none';
+  document.getElementById('auth-confirm-msg').style.display='none';
+}
+
+async function handleAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const password=document.getElementById('auth-password').value.trim();
+  const errEl=document.getElementById('auth-error');
+  const sucEl=document.getElementById('auth-success');
+  errEl.style.display='none';sucEl.style.display='none';
+  if(!email||!password){errEl.textContent='Completa email y contraseña.';errEl.style.display='block';return;}
+  const btn=document.getElementById('auth-btn');
+  btn.textContent='...';btn.disabled=true;
+  if(authMode==='login'){
+    const{error}=await sb.auth.signInWithPassword({email,password});
+    if(error){errEl.textContent='Email o contraseña incorrectos.';errEl.style.display='block';}
+  } else {
+    const{error}=await sb.auth.signUp({email,password});
+    if(error){errEl.textContent=error.message;errEl.style.display='block';}
+    else{sucEl.textContent='Cuenta creada. Revisa tu email para confirmarla.';sucEl.style.display='block';document.getElementById('auth-confirm-msg').style.display='block';}
+  }
+  btn.textContent=authMode==='login'?'Iniciar sesión':'Crear cuenta';btn.disabled=false;
+}
+
+async function handleLogout(){
+  await sb.auth.signOut();
+  currentUser=null;flights=[];
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+}
+
+async function loadFlights(){
+  const{data,error}=await sb.from('flights').select('*').eq('user_id',currentUser.id).order('date',{ascending:false});
+  if(!error&&data)flights=data.map(f=>({id:f.id,origin:f.origin,dest:f.dest,date:f.date,km:f.km,airline:f.airline,country:f.country,tripType:f.trip_type}));
+  else flights=[];
+}
+
+async function save(flight){
+  await sb.from('flights').insert({user_id:currentUser.id,origin:flight.origin,dest:flight.dest,date:flight.date,km:flight.km,airline:flight.airline,country:flight.country,trip_type:flight.tripType});
+}
+
+async function load(){
+  document.getElementById('auth-loading').style.display='flex';
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('main-app').style.display='none';
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    await loadFlights();
+    document.getElementById('auth-loading').style.display='none';
+    document.getElementById('main-app').style.display='block';
+    setDefaultDate();render();
+  } else {
+    document.getElementById('auth-loading').style.display='none';
+    document.getElementById('auth-screen').style.display='flex';
+  }
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){
+      currentUser=session.user;
+      await loadFlights();
+      document.getElementById('auth-screen').style.display='none';
+      document.getElementById('main-app').style.display='block';
+      setDefaultDate();render();
+    }
+    if(event==='SIGNED_OUT'){
+      document.getElementById('main-app').style.display='none';
+      document.getElementById('auth-screen').style.display='flex';
+    }
+  });
+}
 function setDefaultDate(){const d=new Date();document.getElementById('f-date').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function totalKm(){return flights.reduce((s,f)=>s+(f.km||0),0);}
 function totalCountries(){return new Set(flights.map(f=>f.country).filter(Boolean)).size;}
@@ -427,7 +556,7 @@ function getVisitedByContinent(){
   return result;
 }
 
-function addFlight(){
+async function addFlight(){
   const origin=document.getElementById('f-origin').value.trim();
   const dest=document.getElementById('f-dest').value.trim();
   const date=document.getElementById('f-date').value;
@@ -444,8 +573,10 @@ function addFlight(){
   const manual=document.getElementById('f-km-manual');
   if(manual&&!currentAutoKm)currentAutoKm=parseInt(manual.value)||0;
   const kmFinal=tripType==='RT'?currentAutoKm*2:currentAutoKm;
-  flights.unshift({id:Date.now(),origin,dest,date,km:kmFinal,airline,country,tripType});
-  save();render();
+  const newFlight={origin,dest,date,km:kmFinal,airline,country,tripType};
+  await save(newFlight);
+  await loadFlights();
+  render();
   ['f-origin','f-dest','f-airline','f-country'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   setDefaultDate();currentAutoKm=0;selectedOrigin=null;selectedDest=null;
   document.getElementById('dist-box').innerHTML=`<span style="color:#bbb;font-size:13px">Escribe origen y destino para calcular la distancia</span>`;
@@ -453,7 +584,13 @@ function addFlight(){
   if(mapRendered)updateMap();
 }
 
-function deleteFlight(id){if(!confirm('¿Eliminar este vuelo?'))return;flights=flights.filter(f=>f.id!==id);save();render();if(mapRendered)updateMap();}
+async function deleteFlight(id){
+  if(!confirm('¿Eliminar este vuelo?'))return;
+  flights=flights.filter(f=>f.id!==id);
+  render();
+  if(mapRendered)updateMap();
+  await sb.from('flights').delete().eq('id',id).eq('user_id',currentUser.id);
+}
 
 function render(){
   const km=totalKm(),countries=totalCountries();
@@ -687,6 +824,15 @@ function renderMap(){
 function showTab(id,el){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');if(id==='mapa'){setTimeout(renderMap,50);renderCountriesByContinent();}}
 
 load();
+
+// Close main-app wrapper
+document.addEventListener('DOMContentLoaded', () => {
+  const app = document.querySelector('.app');
+  if(app && !app.parentElement.id === 'main-app') {
+    const wrapper = document.getElementById('main-app');
+    if(wrapper) wrapper.appendChild(app);
+  }
+});
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {

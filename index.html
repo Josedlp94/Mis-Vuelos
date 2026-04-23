@@ -98,6 +98,18 @@ input:focus{border-color:#1a1a1a}
       <div id="auth-error" style="display:none;background:#fef2f2;color:#E24B4A;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:12px;text-align:center"></div>
       <div id="auth-success" style="display:none;background:#f0fdf8;color:#0F6E56;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:12px;text-align:center"></div>
 
+      <div id="register-name-fields" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div>
+            <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">Nombre</label>
+            <input id="auth-firstname" type="text" placeholder="Jose" style="width:100%;font-size:14px;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none">
+          </div>
+          <div>
+            <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">Apellido</label>
+            <input id="auth-lastname" type="text" placeholder="De la Puente" style="width:100%;font-size:14px;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none">
+          </div>
+        </div>
+      </div>
       <div style="margin-bottom:12px">
         <label style="font-size:13px;color:#666;display:block;margin-bottom:4px">Email</label>
         <input id="auth-email" type="email" placeholder="tu@email.com" style="width:100%;font-size:14px;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;background:#fff;color:#1a1a1a;outline:none;-webkit-appearance:none">
@@ -289,7 +301,6 @@ const AIRPORTS={"MEX":{"name":"Ciudad de México","city":"Ciudad de México","co
 "MBJ":{"name":"Montego Bay","city":"Montego Bay","country":"Jamaica","continent":"América Central","lat":18.5037,"lon":-77.9134},
 "POS":{"name":"Puerto España","city":"Puerto España","country":"Trinidad y Tobago","continent":"América Central","lat":10.5954,"lon":-61.3372},
 "BGI":{"name":"Barbados","city":"Bridgetown","country":"Barbados","continent":"América Central","lat":13.0746,"lon":-59.4925},
-"GYE":{"name":"Guayaquil","city":"Guayaquil","country":"Ecuador","continent":"América del Sur","lat":-2.1574,"lon":-79.8836},
 "CNF":{"name":"Belo Horizonte","city":"Belo Horizonte","country":"Brasil","continent":"América del Sur","lat":-19.6244,"lon":-43.9719},
 "SSA":{"name":"Salvador de Bahía","city":"Salvador","country":"Brasil","continent":"América del Sur","lat":-12.9086,"lon":-38.3225},
 "REC":{"name":"Recife","city":"Recife","country":"Brasil","continent":"América del Sur","lat":-8.1265,"lon":-34.9236},
@@ -297,7 +308,28 @@ const AIRPORTS={"MEX":{"name":"Ciudad de México","city":"Ciudad de México","co
 "POA":{"name":"Porto Alegre","city":"Porto Alegre","country":"Brasil","continent":"América del Sur","lat":-29.9944,"lon":-51.1714},
 "COR":{"name":"Córdoba","city":"Córdoba","country":"Argentina","continent":"América del Sur","lat":-31.3236,"lon":-64.2080},
 "MDZ":{"name":"Mendoza","city":"Mendoza","country":"Argentina","continent":"América del Sur","lat":-32.8317,"lon":-68.7929},
-"AEP":{"name":"Buenos Aires Aeroparque","city":"Buenos Aires","country":"Argentina","continent":"América del Sur","lat":-34.5592,"lon":-58.4156},"PTY":{"name":"Ciudad de Panamá","city":"Ciudad de Panamá","country":"Panamá","continent":"América Central","lat":9.0714,"lon":-79.3835},"HAV":{"name":"La Habana","city":"La Habana","country":"Cuba","continent":"América Central","lat":22.9892,"lon":-82.4091},"SDQ":{"name":"Santo Domingo","city":"Santo Domingo","country":"Rep. Dominicana","continent":"América Central","lat":18.4297,"lon":-69.6689},"BOG":{"name":"Bogotá","city":"Bogotá","country":"Colombia","continent":"América del Sur","lat":4.7016,"lon":-74.1469},"MDE":{"name":"Medellín","city":"Medellín","country":"Colombia","continent":"América del Sur","lat":6.1644,"lon":-75.4231},"GRU":{"name":"São Paulo","city":"São Paulo","country":"Brasil","continent":"América del Sur","lat":-23.4356,"lon":-46.4731},"GIG":{"name":"Río de Janeiro","city":"Río de Janeiro","country":"Brasil","continent":"América del Sur","lat":-22.8100,"lon":-43.2506},"EZE":{"name":"Buenos Aires","city":"Buenos Aires","country":"Argentina","continent":"América del Sur","lat":-34.8222,"lon":-58.5358},"SCL":{"name":"Santiago","city":"Santiago","country":"Chile","continent":"América del Sur","lat":-33.3930,"lon":-70.7858},"LIM":{"name":"Lima","city":"Lima","country":"Perú","continent":"América del Sur","lat":-12.0219,"lon":-77.1143},
+"AEP":{"name":"Buenos Aires Aeroparque","city":"Buenos Aires","country":"Argentina","continent":"América del Sur","lat":-34.5592,"lon":-58.4156},"PTY":{"name":"Ciudad de Panamá","city":"Ciudad de Panamá","country":"Panamá","continent":"América Central","lat":9.0714,"lon":-79.3835},"HAV":{"name":"La Habana","city":"La Habana","country":"Cuba","continent":"América Central","lat":22.9892,"lon":-82.4091},"SDQ":{"name":"Santo Domingo","city":"Santo Domingo","country":"Rep. Dominicana","continent":"América Central","lat":18.4297,"lon":-69.6689},"BOG":{"name":"Bogotá","city":"Bogotá","country":"Colombia","continent":"América del Sur","lat":4.7016,"lon":-74.1469},
+"MDE":{"name":"Medellín","city":"Medellín","country":"Colombia","continent":"América del Sur","lat":6.1644,"lon":-75.4231},
+"CLO":{"name":"Cali","city":"Cali","country":"Colombia","continent":"América del Sur","lat":3.5432,"lon":-76.3816},
+"CTG":{"name":"Cartagena","city":"Cartagena","country":"Colombia","continent":"América del Sur","lat":10.4424,"lon":-75.5130},
+"BAQ":{"name":"Barranquilla","city":"Barranquilla","country":"Colombia","continent":"América del Sur","lat":10.8896,"lon":-74.7808},
+"SMR":{"name":"Santa Marta","city":"Santa Marta","country":"Colombia","continent":"América del Sur","lat":11.1196,"lon":-74.2306},
+"ADZ":{"name":"San Andrés","city":"San Andrés","country":"Colombia","continent":"América del Sur","lat":12.5836,"lon":-81.7112},
+"PEI":{"name":"Pereira","city":"Pereira","country":"Colombia","continent":"América del Sur","lat":4.8127,"lon":-75.7395},
+"BGA":{"name":"Bucaramanga","city":"Bucaramanga","country":"Colombia","continent":"América del Sur","lat":7.1248,"lon":-73.1848},
+"CUC":{"name":"Cúcuta","city":"Cúcuta","country":"Colombia","continent":"América del Sur","lat":7.9275,"lon":-72.5115},
+"ARC":{"name":"Arauca","city":"Arauca","country":"Colombia","continent":"América del Sur","lat":7.0688,"lon":-70.7369},
+"VVC":{"name":"Villavicencio","city":"Villavicencio","country":"Colombia","continent":"América del Sur","lat":4.1679,"lon":-73.6138},
+"MZL":{"name":"Manizales","city":"Manizales","country":"Colombia","continent":"América del Sur","lat":5.0296,"lon":-75.4647},
+"NVA":{"name":"Neiva","city":"Neiva","country":"Colombia","continent":"América del Sur","lat":2.9502,"lon":-75.2937},
+"PSO":{"name":"Pasto","city":"Pasto","country":"Colombia","continent":"América del Sur","lat":1.3963,"lon":-77.2914},
+"UIO":{"name":"Quito","city":"Quito","country":"Ecuador","continent":"América del Sur","lat":-0.1292,"lon":-78.3575},
+"GYE":{"name":"Guayaquil","city":"Guayaquil","country":"Ecuador","continent":"América del Sur","lat":-2.1574,"lon":-79.8836},
+"CUE":{"name":"Cuenca","city":"Cuenca","country":"Ecuador","continent":"América del Sur","lat":-2.8895,"lon":-78.9842},
+"MEC":{"name":"Manta","city":"Manta","country":"Ecuador","continent":"América del Sur","lat":-0.9461,"lon":-80.6788},
+"LOH":{"name":"Loja","city":"Loja","country":"Ecuador","continent":"América del Sur","lat":-3.9959,"lon":-79.3719},
+"ESM":{"name":"Esmeraldas","city":"Esmeraldas","country":"Ecuador","continent":"América del Sur","lat":0.9785,"lon":-79.6266},
+"TUA":{"name":"Tulcán","city":"Tulcán","country":"Ecuador","continent":"América del Sur","lat":0.8095,"lon":-77.7081},"GRU":{"name":"São Paulo","city":"São Paulo","country":"Brasil","continent":"América del Sur","lat":-23.4356,"lon":-46.4731},"GIG":{"name":"Río de Janeiro","city":"Río de Janeiro","country":"Brasil","continent":"América del Sur","lat":-22.8100,"lon":-43.2506},"EZE":{"name":"Buenos Aires","city":"Buenos Aires","country":"Argentina","continent":"América del Sur","lat":-34.8222,"lon":-58.5358},"SCL":{"name":"Santiago","city":"Santiago","country":"Chile","continent":"América del Sur","lat":-33.3930,"lon":-70.7858},"LIM":{"name":"Lima","city":"Lima","country":"Perú","continent":"América del Sur","lat":-12.0219,"lon":-77.1143},
 "TBP":{"name":"Tumbes","city":"Tumbes","country":"Perú","continent":"América del Sur","lat":-3.5526,"lon":-80.3814},
 "PIU":{"name":"Piura","city":"Piura","country":"Perú","continent":"América del Sur","lat":-5.2075,"lon":-80.6164},
 "CIX":{"name":"Chiclayo","city":"Chiclayo","country":"Perú","continent":"América del Sur","lat":-6.7875,"lon":-79.8281},
@@ -316,8 +348,7 @@ const AIRPORTS={"MEX":{"name":"Ciudad de México","city":"Ciudad de México","co
 "HUU":{"name":"Huánuco","city":"Huánuco","country":"Perú","continent":"América del Sur","lat":-9.8781,"lon":-76.2048},
 "AYP":{"name":"Ayacucho","city":"Ayacucho","country":"Perú","continent":"América del Sur","lat":-13.1548,"lon":-74.2044},
 "ANS":{"name":"Andahuaylas","city":"Andahuaylas","country":"Perú","continent":"América del Sur","lat":-13.7064,"lon":-73.3503},
-"PEM":{"name":"Puerto Maldonado","city":"Puerto Maldonado","country":"Perú","continent":"América del Sur","lat":-12.6135,"lon":-69.2286},
-"UIO":{"name":"Quito","city":"Quito","country":"Ecuador","continent":"América del Sur","lat":-0.1292,"lon":-78.3575},"MVD":{"name":"Montevideo","city":"Montevideo","country":"Uruguay","continent":"América del Sur","lat":-34.8381,"lon":-56.0308},"ASU":{"name":"Asunción","city":"Asunción","country":"Paraguay","continent":"América del Sur","lat":-25.2399,"lon":-57.5199},"CCS":{"name":"Caracas","city":"Caracas","country":"Venezuela","continent":"América del Sur","lat":10.6031,"lon":-66.9913},"MAD":{"name":"Madrid","city":"Madrid","country":"España","continent":"Europa","lat":40.4936,"lon":-3.5668},"MXP":{"name":"Milán Malpensa","city":"Milán","country":"Italia","continent":"Europa","lat":45.6306,"lon":8.7281},"LIN":{"name":"Milán Linate","city":"Milán","country":"Italia","continent":"Europa","lat":45.4455,"lon":9.2768},"BER":{"name":"Berlín Brandenburg","city":"Berlín","country":"Alemania","continent":"Europa","lat":52.3667,"lon":13.5033},
+"PEM":{"name":"Puerto Maldonado","city":"Puerto Maldonado","country":"Perú","continent":"América del Sur","lat":-12.6135,"lon":-69.2286},"MVD":{"name":"Montevideo","city":"Montevideo","country":"Uruguay","continent":"América del Sur","lat":-34.8381,"lon":-56.0308},"ASU":{"name":"Asunción","city":"Asunción","country":"Paraguay","continent":"América del Sur","lat":-25.2399,"lon":-57.5199},"CCS":{"name":"Caracas","city":"Caracas","country":"Venezuela","continent":"América del Sur","lat":10.6031,"lon":-66.9913},"MAD":{"name":"Madrid","city":"Madrid","country":"España","continent":"Europa","lat":40.4936,"lon":-3.5668},"MXP":{"name":"Milán Malpensa","city":"Milán","country":"Italia","continent":"Europa","lat":45.6306,"lon":8.7281},"LIN":{"name":"Milán Linate","city":"Milán","country":"Italia","continent":"Europa","lat":45.4455,"lon":9.2768},"BER":{"name":"Berlín Brandenburg","city":"Berlín","country":"Alemania","continent":"Europa","lat":52.3667,"lon":13.5033},
 
 
 
@@ -472,6 +503,7 @@ function switchAuthTab(mode){
   document.getElementById('auth-error').style.display='none';
   document.getElementById('auth-success').style.display='none';
   document.getElementById('auth-confirm-msg').style.display='none';
+  document.getElementById('register-name-fields').style.display=isLogin?'none':'block';
 }
 
 async function handleAuth(){
@@ -487,9 +519,17 @@ async function handleAuth(){
     const{error}=await sb.auth.signInWithPassword({email,password});
     if(error){errEl.textContent='Email o contraseña incorrectos.';errEl.style.display='block';}
   } else {
-    const{error}=await sb.auth.signUp({email,password});
+    const firstName=document.getElementById('auth-firstname').value.trim();
+    const lastName=document.getElementById('auth-lastname').value.trim();
+    if(!firstName||!lastName){errEl.textContent='Completa tu nombre y apellido.';errEl.style.display='block';btn.textContent='Crear cuenta';btn.disabled=false;return;}
+    const{data,error}=await sb.auth.signUp({email,password});
     if(error){errEl.textContent=error.message;errEl.style.display='block';}
-    else{sucEl.textContent='Cuenta creada. Revisa tu email para confirmarla.';sucEl.style.display='block';document.getElementById('auth-confirm-msg').style.display='block';}
+    else{
+      if(data.user){
+        await sb.from('profiles').insert({id:data.user.id,first_name:firstName,last_name:lastName});
+      }
+      sucEl.textContent='Cuenta creada. Revisa tu email para confirmarla.';sucEl.style.display='block';document.getElementById('auth-confirm-msg').style.display='block';
+    }
   }
   btn.textContent=authMode==='login'?'Iniciar sesión':'Crear cuenta';btn.disabled=false;
 }
@@ -499,6 +539,12 @@ async function handleLogout(){
   currentUser=null;flights=[];
   document.getElementById('main-app').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
+}
+
+async function loadProfile(){
+  const{data}=await sb.from('profiles').select('first_name').eq('id',currentUser.id).single();
+  const greeting=document.getElementById('header-greeting');
+  if(greeting)greeting.textContent=data?`¡Hola ${data.first_name}!`:'¡Hola!';
 }
 
 async function loadFlights(){
@@ -518,7 +564,7 @@ async function load(){
   const{data:{session}}=await sb.auth.getSession();
   if(session){
     currentUser=session.user;
-    await loadFlights();
+    await Promise.all([loadFlights(),loadProfile()]);
     document.getElementById('auth-loading').style.display='none';
     document.getElementById('main-app').style.display='block';
     setDefaultDate();render();
@@ -529,7 +575,7 @@ async function load(){
   sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session){
       currentUser=session.user;
-      await loadFlights();
+      await Promise.all([loadFlights(),loadProfile()]);
       document.getElementById('auth-screen').style.display='none';
       document.getElementById('main-app').style.display='block';
       setDefaultDate();render();

@@ -139,9 +139,11 @@ input:focus{border-color:#1a1a1a}
 <div class="app">
   <div class="header">
     <div>
-      <div class="header-title">Track My Flights ✈</div>
+      <div style="font-size:13px;font-weight:500;color:#999">Track My Flights ✈</div>
+      <div class="header-title" id="header-greeting">¡Hola!</div>
       <div class="header-sub" id="header-sub">0 vuelos · 0 países · 0 km</div>
     </div>
+    <button onclick="handleLogout()" style="font-size:12px;color:#999;background:none;border:0.5px solid #e5e5e0;border-radius:8px;padding:5px 10px;cursor:pointer">Salir</button>
   </div>
 
   <div class="tabs">
@@ -542,9 +544,9 @@ async function handleLogout(){
 }
 
 async function loadProfile(){
-  const{data}=await sb.from('profiles').select('first_name').eq('id',currentUser.id).single();
+  const{data,error}=await sb.from('profiles').select('first_name').eq('id',currentUser.id).single();
   const greeting=document.getElementById('header-greeting');
-  if(greeting)greeting.textContent=data?`¡Hola ${data.first_name}!`:'¡Hola!';
+  if(greeting)greeting.textContent=(data&&data.first_name)?`¡Hola ${data.first_name}!`:'¡Hola!';
 }
 
 async function loadFlights(){

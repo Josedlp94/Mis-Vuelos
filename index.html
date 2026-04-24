@@ -524,12 +524,10 @@ async function handleAuth(){
     const firstName=document.getElementById('auth-firstname').value.trim();
     const lastName=document.getElementById('auth-lastname').value.trim();
     if(!firstName||!lastName){errEl.textContent='Completa tu nombre y apellido.';errEl.style.display='block';btn.textContent='Crear cuenta';btn.disabled=false;return;}
-    const{data,error}=await sb.auth.signUp({email,password});
+    const{data,error}=await sb.auth.signUp({email,password,options:{data:{first_name:firstName,last_name:lastName}}});
     if(error){errEl.textContent=error.message;errEl.style.display='block';}
     else{
-      if(data.user){
-        await sb.from('profiles').insert({id:data.user.id,first_name:firstName,last_name:lastName});
-      }
+      // profile created automatically by trigger
       sucEl.innerHTML='¡Cuenta creada! Revisa tu bandeja de entrada y también la carpeta de <strong>spam</strong> para confirmar tu registro.';sucEl.style.display='block';document.getElementById('auth-confirm-msg').style.display='block';
     }
   }

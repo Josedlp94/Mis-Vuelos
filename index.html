@@ -122,7 +122,7 @@ input:focus{border-color:#1a1a1a}
       <button id="auth-btn" onclick="handleAuth()" style="width:100%;padding:12px;font-size:14px;font-weight:600;border:none;background:#1a1a1a;color:#fff;border-radius:10px;cursor:pointer">Iniciar sesión</button>
 
       <div id="auth-confirm-msg" style="display:none;margin-top:12px;font-size:12px;color:#999;text-align:center">
-        Revisa tu email para confirmar tu cuenta antes de iniciar sesión.
+        Revisa tu bandeja de entrada y la carpeta de <strong>spam</strong> para confirmar tu cuenta antes de iniciar sesión.
       </div>
     </div>
   </div>
@@ -530,7 +530,7 @@ async function handleAuth(){
       if(data.user){
         await sb.from('profiles').insert({id:data.user.id,first_name:firstName,last_name:lastName});
       }
-      sucEl.textContent='Cuenta creada. Revisa tu email para confirmarla.';sucEl.style.display='block';document.getElementById('auth-confirm-msg').style.display='block';
+      sucEl.innerHTML='¡Cuenta creada! Revisa tu bandeja de entrada y también la carpeta de <strong>spam</strong> para confirmar tu registro.';sucEl.style.display='block';document.getElementById('auth-confirm-msg').style.display='block';
     }
   }
   btn.textContent=authMode==='login'?'Iniciar sesión':'Crear cuenta';btn.disabled=false;

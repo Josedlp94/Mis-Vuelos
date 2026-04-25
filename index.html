@@ -867,7 +867,7 @@ function renderMap(){
   mapRendered=true;
 }
 
-function showTab(id,el){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');if(id==='mapa'){setTimeout(renderMap,50);renderCountriesByContinent();}}
+function showTab(id,el){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');if(id==='mapa'){setTimeout(renderMap,50);renderCountriesByContinent();}if(id==='estadisticas'){const year=new Date().getFullYear();const from=document.getElementById('s-date-from');const to=document.getElementById('s-date-to');if(!from.value&&!to.value){from.value=`${year}-01-01`;to.value=`${year}-12-31`;renderStats();}}}
 
 load();
 
